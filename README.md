@@ -46,6 +46,8 @@ SET A 0x0011 ; Set register A to 0x0011
 #### MOV
 Takes in two arguments, the first being the register to move, and the second being the register to move it to
 ```lks
+MOV AAC A;
+```
 
 #### MOM
 Moves the value of the first register to the location in memory specified by the second register
