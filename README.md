@@ -19,7 +19,17 @@ The CPU is a simple accumulator based CPU with 5 general purpose registers, a pr
 - ACC - Accumulator
 
 ### Memory
-The memory is a list of 1024 memory locations, each location can store a value from 0x0000 to 0xFFFF
+The memory is a list of 2048 memory locations, each location can store a value from 0x0000 to 0xFFFF
+
+#### Memory Map
+- 0x0000 - 0x0FF - General purpose memory
+- 0x0100 - 0x3FF - Video memory
+- 0x0400 - 0x07FF - General purpose memory
+
+##### Video Memory Specification
+Video Memory represents a finalized image size of 16x16 pixles.
+Video Memory is arranged as RGB values for each pixel left-to-right, top-to-bottom.
+Each pixel is represented by 3 memory locations, one for each color channel.
 
 ### Program Counter
 The program counter is a register that stores the location of the next instruction to be executed
@@ -141,6 +151,14 @@ JGE 0x0001 ; Jump to line 0x0001 if the previous comparison was greater or equal
 Takes in one argument - Jumps to that line in the program if the previous comparison was less or equal
 ```lks
 JLE 0x0001 ; Jump to line 0x0001 if the previous comparison was less or equal
+```
+
+#### HLT
+Halts the program without reaching the end of file.
+Takes in exit code as argument.
+Recommended to use at end of file anyway.
+```lks
+HLT 0x010 ; Halt the program with exit code 16
 ```
 
 ### INTERRUPTS

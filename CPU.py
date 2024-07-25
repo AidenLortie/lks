@@ -26,7 +26,7 @@ B - general purpose register
 C - general purpose register
 D - general purpose register
 E - general purpose register
-CMP - comparison register
+COMP - comparison register
 NI - Index of next instruction
 ACC - accumulator
 
@@ -72,7 +72,7 @@ registerNI = 0
 registerCOMP = 0
 registerACC = 0
 
-memory = numpy.zeros(1024, dtype=int)
+memory = numpy.zeros(2048, dtype=int)
 
 instructFile = open("instruct.lks", "r")
 instruct = instructFile.readlines()
@@ -93,7 +93,7 @@ def SET(a, b):
         registerE = b
     elif a == "ACC":
         registerACC = b
-    elif a == "CMP":
+    elif a == "COMP":
         registerCOMP = b
     else:
         memory[int(a, 0)] = b
@@ -121,7 +121,7 @@ def MOD(a, b):
 
 def MOV(b, a):
     global registerA, registerB, registerC, registerD, registerE, registerACC, registerCOMP, memory
-    # if a references a register (A, B, C, ACC, CMP) then set the value of that register to b
+    # if a references a register (A, B, C, ACC, COMP) then set the value of that register to b
     # otherwise set the value of the memory address to b
     if a == "A":
         a = registerA
@@ -135,7 +135,7 @@ def MOV(b, a):
         a = registerE
     elif a == "ACC":
         a = registerACC
-    elif a == "CMP":
+    elif a == "COMP":
         a = registerCOMP
     else:
         a = memory[int(a, 0)]
@@ -168,7 +168,7 @@ def MOM(a, b):
         a = registerE
     elif a == "ACC":
         a = registerACC
-    elif a == "CMP":
+    elif a == "COMP":
         a = registerCOMP
     else:
         a = memory[int(a, 0)]
@@ -236,20 +236,32 @@ def INT(a):
     elif a == 1:
         print(registerA)
     elif a == 2:
-        videobuffer = numpy.reshape(memory[0x0100:0x0200], (16, 16))
-        videoout = [[0 for x in range(16)] for y in range(16)]
+        videobuffer = numpy.reshape(memory[0x0100:0x0400], (16, 16, 3))
+        videoout = numpy.zeros((16, 16, 3), dtype=numpy.uint8)
         for i in range(16):
             for j in range(16):
-                videoout[i][j] = (videobuffer[i][j], videobuffer[i][j], videobuffer[i][j])
+                for k in range(3):
+                    videoout[i][j][k] = videobuffer[i][j][k]
         videoout = numpy.array(videoout, dtype=numpy.uint8)
         img = Image.fromarray(videoout)
         img.show()
         img.save("output.png")
+    elif a == 3:
+        # output registers
+        print("Register A: ", registerA)
+        print("Register B: ", registerB)
+        print("Register C: ", registerC)
+        print("Register D: ", registerD)
+        print("Register E: ", registerE)
+        print("Register ACC: ", registerACC)
+        print("Register COMP: ", registerCOMP)
+        print("Register NI: ", registerNI)
     else:
         print("Invalid interrupt")
 
-def HLT():
-    exit()
+def HLT(a):
+    a = int(a, 0)
+    exit(a)
 
 def CLR(a):
     global registerA, registerB, registerC, registerACC, registerCOMP, memory, registerNI, registerD, registerE
@@ -265,7 +277,7 @@ def CLR(a):
         registerE = 0
     elif a == "ACC":
         registerACC = 0
-    elif a == "CMP":
+    elif a == "COMP":
         registerCOMP = 0
     else:
         memory[a] = 0
@@ -288,7 +300,7 @@ def executeInstruction(lineIn):
             a = registerE
         elif a == "ACC":
             a = registerACC
-        elif a == "CMP":
+        elif a == "COMP":
             a = registerCOMP
         elif a[0:3] == "m0x" and not opcode == "INT": # check if it is a memory address and not an interrupt
             a.strip("m")
@@ -309,7 +321,7 @@ def executeInstruction(lineIn):
             b = registerE
         elif b == "ACC":
             b = registerACC
-        elif b == "CMP":
+        elif b == "COMP":
             b = registerCOMP
         elif b[0:3] == "m0x":
             b.strip("m")
@@ -359,7 +371,8 @@ def executeInstruction(lineIn):
         a = int(lineIn[1], 0)
         INT(a)
     elif opcode == "HLT":
-        HLT()
+        a = lineIn[1]
+        HLT(a)
     elif opcode == "CLR":
         a = lineIn[1]
         CLR(a)

@@ -1,13 +1,24 @@
-SET A 0x00      ;
+SET A 0x00      ; set a to 0
+SET B 0xFF      ; set b to 255
+SET C 0x00      ; set c to 0
 SET D 0x0100    ; set d to reference the start of video memory
-MOM A D         ; move the value in A to the memory location in D
-ADD A 0x01      ; add 1 to A
-MOV A ACC       ; move the result to A
+INT 0x03        ; call breakpoint
+MOM C D         ; move the value in A to the memory location in D
+ADD C 0x01      ; add 1 to A
+MOV C ACC       ; move the result to A
 ADD D 0x01      ; add 1 to D
 MOV D ACC       ; move the result to D
-MOD A 0x00FF    ; ensure A is in the range 0-255
-MOV A ACC       ; move the result to A
-CMP D 0x0200    ; compare D to 0x0200 (the end of video memory)
-JNE 0x02        ; if D is not equal to 0x0200, jump to 0x02
-INT 0x02        ; display video memory
-HLT             ; halt the program
+MOM B D         ; move the value in B to the memory location in D
+SUB B 0x01      ; subtract 1 from B
+MOV B ACC       ; move the result to B
+ADD D 0x01      ; add 1 to D
+MOV D ACC       ; move the result to D
+MOM A D         ; move the value in A to the memory location in D
+ADD D 0x01      ; add 1 to D
+MOV D ACC       ; move the result to D
+MOD C 0x0100    ; ensure C is in the range 0-255
+MOV C ACC       ; move the result to A
+CMP D 0x0400    ; compare D to 0x0200 (the end of video memory)
+JLE 0x04        ; if D is not equal to 0x0200, jump to 0x02
+INT 0x02        ; console log registers
+HLT 0x00        ; halt the program
