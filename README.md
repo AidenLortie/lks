@@ -1,7 +1,7 @@
 # Lolks Komputer System (LKS) Instruction set
 
 ## Introduction
-The Lolks Komputer System is a bastardized set of computing instructions designed to be absolute hell (not really)
+The Lolks Komputer System is a bastardized set of computing instructions. This project has been archived as it was only ever a short hobby project
 
 These instructions were created while i was bored and messing around with Python
 
